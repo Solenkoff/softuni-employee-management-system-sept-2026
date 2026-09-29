@@ -11,7 +11,7 @@ import './styles.css';
 
 function App() { 
     const [users, setUsers] = useState([]);
-    console.log(users);
+    const [showSaveUserModal, setShowSaveUserModal] = useState(false);
     
 
     useEffect(() => {
@@ -24,6 +24,10 @@ function App() {
         .then(data => setUsers(data))
         .catch(error => console.log('Error fetching users:', error));
     }, []);
+
+    const ToggleShowUserModal = () => {
+        setShowSaveUserModal(true);
+    }
 
     return (
         <>
@@ -40,7 +44,7 @@ function App() {
                     <UserList users={users} />
 
                     {/* <!-- New user button  --> */}
-                    <button className="btn-add btn">Add new user</button>
+                    <button className="btn-add btn" onClick={() => {ToggleShowUserModal()}}>Add new user</button>
 
                     <Pagination />
 
@@ -51,7 +55,7 @@ function App() {
 
 
                 {/* <!-- Create/Edit Form component  --> */}
-                {/* <SaveUserModal /> */}
+                { showSaveUserModal && <SaveUserModal /> }
 
 
                 {/* <!-- Delete user component  --> */}
