@@ -25,8 +25,12 @@ function App() {
         .catch(error => console.log('Error fetching users:', error));
     }, []);
 
-    const ToggleShowUserModal = () => {
+    const addUserClickHandler = () => {
         setShowSaveUserModal(true);
+    }
+
+    const addUserCloseHandler = () => {
+        setShowSaveUserModal(false);
     }
 
     return (
@@ -44,7 +48,7 @@ function App() {
                     <UserList users={users} />
 
                     {/* <!-- New user button  --> */}
-                    <button className="btn-add btn" onClick={() => {ToggleShowUserModal()}}>Add new user</button>
+                    <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 
                     <Pagination />
 
@@ -55,7 +59,7 @@ function App() {
 
 
                 {/* <!-- Create/Edit Form component  --> */}
-                { showSaveUserModal && <SaveUserModal /> }
+                { showSaveUserModal && <SaveUserModal onClose={addUserCloseHandler}/> }
 
 
                 {/* <!-- Delete user component  --> */}
