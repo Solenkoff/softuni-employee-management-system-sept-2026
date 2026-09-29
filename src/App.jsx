@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import Pagination from './components/Pagination';
@@ -8,7 +9,22 @@ import UserList from './components/UserList';
 import UserSearch from './components/UserSearch';
 import './styles.css';
 
-function App() {
+function App() { 
+    const [users, setUsers] = useState([]);
+    console.log(users);
+    
+
+    useEffect(() => {
+        fetch('https://zkkoreczibrcyvogpget.supabase.co/rest/v1/users', {
+            headers: {
+                'apikey': 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90',
+            }
+        })
+        .then(res => res.json())
+        .then(data => setUsers(data))
+        .catch(error => console.log('Error fetching users:', error));
+    }, []);
+
     return (
         <>
 
@@ -21,7 +37,7 @@ function App() {
                     <UserSearch />
 
                     {/* <!-- Table component --> */}
-                    <UserList />
+                    <UserList users={users} />
 
                     {/* <!-- New user button  --> */}
                     <button className="btn-add btn">Add new user</button>
