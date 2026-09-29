@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+
 import Footer from './components/Footer';
 import Header from './components/Header';
 import Pagination from './components/Pagination';
@@ -7,22 +8,26 @@ import UserDeleteModal from './components/UserDeleteModal';
 import UserDetails from './components/UserDetails';
 import UserList from './components/UserList';
 import UserSearch from './components/UserSearch';
+
 import './styles.css';
 
-function App() { 
+const baseUrl = 'https://zkkoreczibrcyvogpget.supabase.co/rest/v1/users';
+const apiKay = 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90';
+
+function App() {
     const [users, setUsers] = useState([]);
     const [showSaveUserModal, setShowSaveUserModal] = useState(false);
-    
+
 
     useEffect(() => {
-        fetch('https://zkkoreczibrcyvogpget.supabase.co/rest/v1/users', {
+        fetch(baseUrl, {
             headers: {
-                'apikey': 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90',
+                'apikey': apiKay,
             }
         })
-        .then(res => res.json())
-        .then(data => setUsers(data))
-        .catch(error => console.log('Error fetching users:', error));
+            .then(res => res.json())
+            .then(data => setUsers(data))
+            .catch(error => console.log('Error fetching users:', error));
     }, []);
 
     const addUserClickHandler = () => {
@@ -31,6 +36,20 @@ function App() {
 
     const addUserCloseHandler = () => {
         setShowSaveUserModal(false);
+    }
+
+    const submitUserHandler = (user) => {
+        fetch(baseUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': apiKay
+            },
+            body: JSON.stringify(user)
+        })
+        .then(() => console.log('User added:'))
+        .catch(err => alert('Error adding userr:', err))
+        .finally(() => setShowSaveUserModal(false));
     }
 
     return (
@@ -59,7 +78,7 @@ function App() {
 
 
                 {/* <!-- Create/Edit Form component  --> */}
-                { showSaveUserModal && <SaveUserModal onClose={addUserCloseHandler}/> }
+                {showSaveUserModal && <SaveUserModal onClose={addUserCloseHandler} onSubmit={submitUserHandler} />}
 
 
                 {/* <!-- Delete user component  --> */}
