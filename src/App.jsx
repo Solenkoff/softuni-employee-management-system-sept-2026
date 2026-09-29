@@ -5,14 +5,13 @@ import Header from './components/Header';
 import Pagination from './components/Pagination';
 import SaveUserModal from './components/SaveUserModal';
 import UserDeleteModal from './components/UserDeleteModal';
-import UserDetails from './components/UserDetails';
 import UserList from './components/UserList';
 import UserSearch from './components/UserSearch';
 
 import './styles.css';
 
 const baseUrl = 'https://zkkoreczibrcyvogpget.supabase.co/rest/v1/users';
-const apiKay = 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90';
+const apiKey = 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90';
 
 function App() {
     const [users, setUsers] = useState([]);
@@ -20,15 +19,12 @@ function App() {
 
 
     useEffect(() => {
-        fetch(baseUrl, {
-            headers: {
-                'apikey': apiKay,
-            }
-        })
-            .then(res => res.json())
+        fetchUsers()
             .then(data => setUsers(data))
             .catch(error => console.log('Error fetching users:', error));
     }, []);
+
+
 
     const addUserClickHandler = () => {
         setShowSaveUserModal(true);
@@ -38,18 +34,24 @@ function App() {
         setShowSaveUserModal(false);
     }
 
-    const submitUserHandler = (user) => {
-        fetch(baseUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': apiKay
-            },
-            body: JSON.stringify(user)
-        })
-        .then(() => console.log('User added:'))
-        .catch(err => alert('Error adding userr:', err))
-        .finally(() => setShowSaveUserModal(false));
+    const submitUserHandler = async (user) => {
+        try {
+            await fetch(baseUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'apikey': apiKey
+                },
+                body: JSON.stringify(user)
+            });
+
+            const updatedUsers = await fetchUsers();
+            setUsers(updatedUsers);
+        } catch (error) {
+            alert('Error adding userr:' + err);
+        } finally {
+            setShowSaveUserModal(false);
+        } 
     }
 
     return (
@@ -73,13 +75,8 @@ function App() {
 
                 </section>
 
-                {/* <!-- User details component  --> */}
-                {/* <UserDetails /> */}
-
-
                 {/* <!-- Create/Edit Form component  --> */}
                 {showSaveUserModal && <SaveUserModal onClose={addUserCloseHandler} onSubmit={submitUserHandler} />}
-
 
                 {/* <!-- Delete user component  --> */}
                 {/* <UserDeleteModal /> */}
@@ -90,6 +87,16 @@ function App() {
 
         </>
     )
+}
+
+async function fetchUsers() {
+    const response = await fetch(baseUrl, {
+        headers: {
+            'apikey': apiKey,
+        }
+    });
+    const data = await response.json();
+    return data;
 }
 
 export default App
