@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { fetchUsers } from './api/usersApi';
 
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -32,6 +33,15 @@ function App() {
 
     const addUserCloseHandler = () => {
         setShowSaveUserModal(false);
+    }
+
+    const userUpdateHandler = async () => {
+        try {
+            const updatedUsers = await fetchUsers();
+            setUsers(updatedUsers);
+        } catch (error) {
+            console.error('Error updating users:', error);
+        }
     }
 
     const submitUserHandler = async (user) => {
@@ -89,14 +99,6 @@ function App() {
     )
 }
 
-async function fetchUsers() {
-    const response = await fetch(baseUrl, {
-        headers: {
-            'apikey': apiKey,
-        }
-    });
-    const data = await response.json();
-    return data;
-}
+
 
 export default App
