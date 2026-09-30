@@ -4,22 +4,53 @@ import { useState } from "react";
 import LoadingShade from "./LoadingShade";
 import UserDetails from "./UserDetails";
 import UserListItem from "./UserListItem";
+import UserDeleteModal from "./UserDeleteModal";
+import Spinner from "./Spinner";
+
+const baseUrl = 'https://zkkoreczibrcyvogpget.supabase.co/rest/v1/users';
+const apiKey = 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90';
 
 export default function UserList({
-    users
+    users,
+    onUserUpdate,
 }) {
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [showUserDetails, setShowUserDetails] = useState(false);
+    const [showUserDelete, setShowUserDelete] = useState(false);
 
     const showUserDetailsHandler = (userId) => {
         setSelectedUserId(userId);
         setShowUserDetails(true);
     };
 
-    const closeUserDetailsHandler = () => {
-        setShowUserDetails(false);
+    const showUserDeleteHandler = (userId) => {
+        setSelectedUserId(userId);
+        setShowUserDelete(true);
     }
-    
+
+    const closeModalHandler = () => {
+        setShowUserDetails(false);
+        setShowUserDelete(false);
+        setSelectedUserId(null);
+    }
+
+    const deleteUserHandler = async () => {
+        try {
+            await fetch(`${baseUrl}?id=eq.${selectedUserId}`, {
+                method: 'DELETE',
+                headers: {
+                    'apikey': apiKey,
+                }
+            });
+
+            onUserUpdate();
+        } catch (error) {
+            console.error('Feiled to delete user;', error);
+        } finally {
+            closeModalHandler();
+        }
+    }
+
     return (
         <div className="table-wrapper">
 
@@ -82,18 +113,21 @@ export default function UserList({
                     </tr>
                 </thead>
                 <tbody>
+                    {users.length === 0 && <Spinner /> }
                     {users.map(user => (
                         <UserListItem
                             key={user.id}
-                            onInfo={showUserDetailsHandler}
                             {...user}
+                            onInfo={showUserDetailsHandler}
+                            onDelete={showUserDeleteHandler}
                         />
                     ))}
                 </tbody>
             </table>
 
             {/* <!-- User details component  --> */}
-            {showUserDetails && <UserDetails userId={selectedUserId} onClose={closeUserDetailsHandler}/>}
+            {showUserDetails && <UserDetails userId={selectedUserId} onClose={closeModalHandler} />}
+            {showUserDelete && <UserDeleteModal onClose={closeModalHandler} onDelete={deleteUserHandler} />}
 
         </div>
     );
