@@ -7,6 +7,7 @@ const apiKey = 'sb_publishable_WC8S0kzBzppRspsAbmwYOg_Yv01NV90';
 
 export default function UserDetails({
     userId,
+    onClose,
 }) {
 
     const [user, setUser] = useState({});
@@ -29,12 +30,12 @@ console.log(user);
 
     return (
         <div className="overlay">
-            <div className="backdrop"></div>
+            <div className="backdrop" onClick={onClose} ></div>
             <div className="modal">
                 <div className="detail-container">
                     <header className="headers">
                         <h2>User Detail</h2>
-                        <button className="btn close">
+                        <button className="btn close" onClick={onClose} >
                             <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="xmark"
                                 className="svg-inline--fa fa-xmark" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
                                 <path fill="currentColor"

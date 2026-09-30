@@ -15,6 +15,10 @@ export default function UserList({
         setSelectedUserId(userId);
         setShowUserDetails(true);
     };
+
+    const closeUserDetailsHandler = () => {
+        setShowUserDetails(false);
+    }
     
     return (
         <div className="table-wrapper">
@@ -89,7 +93,7 @@ export default function UserList({
             </table>
 
             {/* <!-- User details component  --> */}
-            {showUserDetails && <UserDetails userId={selectedUserId} />}
+            {showUserDetails && <UserDetails userId={selectedUserId} onClose={closeUserDetailsHandler}/>}
 
         </div>
     );
