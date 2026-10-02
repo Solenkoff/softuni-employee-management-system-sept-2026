@@ -35,7 +35,7 @@ function App() {
         setShowSaveUserModal(false);
     }
 
-    const userUpdateHandler = async () => {
+    const userListUpdateHandler = async () => {
         try {
             const updatedUsers = await fetchUsers();
             setUsers(updatedUsers);
@@ -44,7 +44,7 @@ function App() {
         }
     }
 
-    const submitUserHandler = async (user) => {
+    const createUserHandler = async (user) => {
         try {
             await fetch(baseUrl, {
                 method: 'POST',
@@ -61,7 +61,7 @@ function App() {
             alert('Error adding userr:' + err);
         } finally {
             setShowSaveUserModal(false);
-        } 
+        }
     }
 
     return (
@@ -76,8 +76,12 @@ function App() {
                     <UserSearch />
 
                     {/* <!-- Table component --> */}
-                    <UserList users={users} />
-                    <UserList users={users} onUserUpdate={userUpdateHandler} />
+                    <UserList
+                        users={users}
+                        onUserListUpdate={userListUpdateHandler}
+                        {/* <!-- !!!  Should NOT pass setter func (setUser) down to children  !!! --> */}
+                        setUsers={setUsers}       
+                    />
 
                     {/* <!-- New user button  --> */}
                     <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
@@ -87,7 +91,12 @@ function App() {
                 </section>
 
                 {/* <!-- Create/Edit Form component  --> */}
-                {showSaveUserModal && <SaveUserModal onClose={addUserCloseHandler} onSubmit={submitUserHandler} />}
+                {showSaveUserModal &&
+                    <SaveUserModal
+                        onClose={addUserCloseHandler}
+                        onCreate={createUserHandler}
+                    />
+                }
 
                 {/* <!-- Delete user component  --> */}
                 {/* <UserDeleteModal /> */}
